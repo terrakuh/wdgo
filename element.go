@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/base64"
 	"fmt"
+	"net/url"
 )
 
 type Element struct {
@@ -19,12 +20,30 @@ func (element *Element) Text(ctx context.Context) (string, error) {
 	return parseResponse[string](data)
 }
 
-func (element *Element) Property(ctx context.Context, name string) (string, error) {
-	data, err := element.session.doRequest(ctx, "GET", fmt.Sprintf("session/%s/element/%s/property/%s", element.session.id, element.id, name), nil)
+func (element *Element) Attribute(ctx context.Context, name string) (*string, error) {
+	data, err := element.session.doRequest(ctx, "GET",
+		fmt.Sprintf("session/%s/element/%s/property/%s", element.session.id, element.id, url.PathEscape(name)), nil)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
-	return parseResponse[string](data)
+	return parseResponse[*string](data)
+}
+
+func (element *Element) Property(ctx context.Context, name string) (*string, error) {
+	data, err := element.session.doRequest(ctx, "GET",
+		fmt.Sprintf("session/%s/element/%s/attribute/%s", element.session.id, element.id, url.PathEscape(name)), nil)
+	if err != nil {
+		return nil, err
+	}
+	return parseResponse[*string](data)
+}
+
+func (element *Element) FindElement(ctx context.Context, selector string, strategy LocatorStrategy) (*Element, error) {
+	return element.session.findElement(ctx, fmt.Sprintf("session/%s/element/%s/element", element.session.id, element.id), selector, strategy)
+}
+
+func (element *Element) FindElements(ctx context.Context, selector string, strategy LocatorStrategy) ([]*Element, error) {
+	return element.session.findElements(ctx, fmt.Sprintf("session/%s/element/%s/elements", element.session.id, element.id), selector, strategy)
 }
 
 func (element *Element) Screenshot(ctx context.Context, text string) ([]byte, error) {

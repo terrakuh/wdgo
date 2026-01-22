@@ -85,13 +85,13 @@ func parseResponse[T any](data []byte) (T, error) {
 
 func parseAsError(data []byte) error {
 	var resp struct {
-		Value Error `json:"value"`
+		Value *Error `json:"value"`
 	}
 
 	r := json.NewDecoder(bytes.NewReader(data))
 	r.DisallowUnknownFields()
 
-	if r.Decode(&resp) == nil {
+	if r.Decode(&resp) == nil && resp.Value != nil {
 		return resp.Value
 	}
 	return nil

@@ -44,11 +44,11 @@ const (
 	ErrCodeUnsupportedOperation    ErrCode = "unsupported operation"
 )
 
-func (err Error) Error() string {
+func (err *Error) Error() string {
 	return err.Message
 }
 
 func IsErrCode(err error, code ErrCode) bool {
-	var e Error
+	var e *Error
 	return errors.As(err, &e) && e.Code == code
 }
