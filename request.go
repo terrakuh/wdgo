@@ -9,30 +9,6 @@ import (
 	"net/http"
 )
 
-func (session *Session) get(ctx context.Context, path string) ([]byte, error) {
-	req, err := http.NewRequestWithContext(ctx, "GET", session.endpoint+path, nil)
-	if err != nil {
-		return nil, fmt.Errorf("create request: %w", err)
-	}
-
-	resp, err := session.client.Do(req)
-	if err != nil {
-		return nil, fmt.Errorf("%w: %w", ErrRemote, err)
-	}
-	defer resp.Body.Close() //nolint:errcheck
-
-	data, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return nil, fmt.Errorf("response read: %w", err)
-	}
-
-	return data, nil
-}
-
-func (session *Session) post(ctx context.Context, path string, payload any) ([]byte, error) {
-	return session.doRequest(ctx, "POST", path, payload)
-}
-
 func (session *Session) doRequest(ctx context.Context, method, path string, payload any) ([]byte, error) {
 	var body io.Reader
 

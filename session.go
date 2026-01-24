@@ -41,7 +41,7 @@ func New(ctx context.Context, endpoint string, capabilities *capability.Capabili
 		opt(&setupCtx)
 	}
 
-	data, err := session.post(ctx, "session", map[string]any{"capabilities": map[string]any{
+	data, err := session.doRequest(ctx, "POST", "session", map[string]any{"capabilities": map[string]any{
 		"alwaysMatch":  capabilities,
 		"firstMatches": setupCtx.firstMatches,
 	}})

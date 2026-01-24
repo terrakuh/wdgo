@@ -63,12 +63,12 @@ func (element *Element) Screenshot(ctx context.Context, text string) ([]byte, er
 }
 
 func (element *Element) Click(ctx context.Context) error {
-	_, err := element.session.doRequest(ctx, "POST", fmt.Sprintf("session/%s/element/%s/click", element.session.id, element.id), nil)
+	_, err := element.session.doRequest(ctx, "POST", fmt.Sprintf("session/%s/element/%s/click", element.session.id, element.id), map[string]string{})
 	return err
 }
 
 func (element *Element) Clear(ctx context.Context) error {
-	_, err := element.session.doRequest(ctx, "POST", fmt.Sprintf("session/%s/element/%s/clear", element.session.id, element.id), nil)
+	_, err := element.session.doRequest(ctx, "POST", fmt.Sprintf("session/%s/element/%s/clear", element.session.id, element.id), map[string]string{})
 	return err
 }
 
