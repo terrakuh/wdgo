@@ -64,16 +64,11 @@ func (session *Session) doRequest(ctx context.Context, method, path string, payl
 		return nil, fmt.Errorf("response read: %w", err)
 	}
 
-	return data, nil
+	return data, parseAsError(data)
 }
 
 func parseResponse[T any](data []byte) (T, error) {
 	var empty T
-
-	if err := parseAsError(data); err != nil {
-		return empty, err
-	}
-
 	var resp struct {
 		Value T `json:"value"`
 	}

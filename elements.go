@@ -34,12 +34,9 @@ func (session *Session) findElement(ctx context.Context, path, selector string, 
 		return nil, err
 	}
 	m, err := parseResponse[map[string]string](data)
-	switch {
-	case IsErrCode(err, ErrCodeNoSuchElement):
-		return nil, nil
-	case err != nil:
+	if err != nil {
 		return nil, err
-	case len(m) != 1:
+	} else if len(m) != 1 {
 		return nil, fmt.Errorf("expected map of 1 but got: %d", len(m))
 	}
 
