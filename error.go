@@ -44,6 +44,8 @@ const (
 	ErrCodeUnsupportedOperation    ErrCode = "unsupported operation"
 )
 
+var ErrInvalidArg = errors.New("invalid argument")
+
 func (err *Error) Error() string {
 	return err.Message
 }

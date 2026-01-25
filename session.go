@@ -62,3 +62,19 @@ func (session *Session) Delete(ctx context.Context) error {
 	_, err := session.doRequest(ctx, "DELETE", "session/"+session.id, nil)
 	return err
 }
+
+// Close closes all open windows and deletes the session.
+func (session *Session) Close(ctx context.Context) error {
+	for {
+		remaining, err := session.CloseWindow(ctx)
+		if err != nil {
+			return err
+		} else if len(remaining) == 0 {
+			break
+		}
+		if err = session.SwitchToWindow(ctx, remaining[0]); err != nil {
+			return err
+		}
+	}
+	return session.Delete(ctx)
+}
