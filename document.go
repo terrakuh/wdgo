@@ -7,6 +7,14 @@ import (
 	"time"
 )
 
+func (session *Session) PageSource(ctx context.Context) (string, error) {
+	data, err := session.doRequest(ctx, "GET", fmt.Sprintf("session/%s/source", session.id), nil)
+	if err != nil {
+		return "", err
+	}
+	return parseResponse[string](data)
+}
+
 func (session *Session) ExecuteScript(ctx context.Context, script string, args []any, timeout time.Duration) (any, error) {
 	var timeoutVal *int32
 	if timeout > 0 {

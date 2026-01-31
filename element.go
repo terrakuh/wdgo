@@ -20,6 +20,14 @@ func (element *Element) Text(ctx context.Context) (string, error) {
 	return parseResponse[string](data)
 }
 
+func (element *Element) Selected(ctx context.Context) (bool, error) {
+	data, err := element.session.doRequest(ctx, "GET", fmt.Sprintf("session/%s/element/%s/selected", element.session.id, element.id), nil)
+	if err != nil {
+		return false, err
+	}
+	return parseResponse[bool](data)
+}
+
 func (element *Element) Attribute(ctx context.Context, name string) (*string, error) {
 	data, err := element.session.doRequest(ctx, "GET",
 		fmt.Sprintf("session/%s/element/%s/property/%s", element.session.id, element.id, url.PathEscape(name)), nil)

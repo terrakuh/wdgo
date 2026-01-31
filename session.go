@@ -3,6 +3,7 @@ package wdgo
 import (
 	"context"
 	"errors"
+	"io"
 	"net/http"
 	"strings"
 
@@ -26,7 +27,11 @@ type (
 	}
 )
 
-var ErrRemote = errors.New("bad remote")
+var (
+	ErrRemote = errors.New("bad remote")
+
+	_ io.Closer = (*Session)(nil)
+)
 
 func New(ctx context.Context, endpoint string, capabilities *capability.Capabilities, options ...Option) (*Session, error) {
 	if !strings.HasSuffix(endpoint, "/") {
@@ -63,8 +68,12 @@ func (session *Session) Delete(ctx context.Context) error {
 	return err
 }
 
-// Close closes all open windows and deletes the session.
-func (session *Session) Close(ctx context.Context) error {
+func (session *Session) Close() error {
+	return session.Quit(context.Background())
+}
+
+// Quit closes all open windows and deletes the session.
+func (session *Session) Quit(ctx context.Context) error {
 	for {
 		remaining, err := session.CloseWindow(ctx)
 		if err != nil {
